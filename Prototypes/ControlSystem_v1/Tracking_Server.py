@@ -8,13 +8,13 @@ import requests
 
 
 class TrackerI(TrackingModule.Tracker):
-    def getAltAzi(self, source, current=None):
+    def getAziAlt(self, source, current=None):
         if source != '':
             source = f'name={source}&'
         req = requests.get(f'http://localhost:8090/api/objects/info?{source}format=json')
         data = req.json()
-        #return f'Alt: {data["altitude"]:.10f} Azi: {data["azimuth"]:.10f}'
-        return f'{data["altitude"]:.10f} {data["azimuth"]:.10f}'
+        #return f'Azi: {data["azimuth"]:.10f} Alt: {data["altitude"]:.10f}'
+        return f'{data["azimuth"]:.10f} {data["altitude"]:.10f}'
 
 
 status = 0

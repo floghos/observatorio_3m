@@ -3,18 +3,19 @@ import traceback
 import Ice
 import RotorModule
 import serial
+from env.py import *
 
 
 
 
 class RotorI(RotorModule.Rotor):
-    def gotoAltAzi(self, alt, azi, current=None):
-        # Writing any commands to the controller always seem to return a response, which should be cleared from the buffer 
-        # before issuing the next   
+    # Currently using YAESU protocol. Planning to change to Rot2Prog eventually.
+
+    def gotoAziAlt(self, azi, alt, current=None):
         #ser.reset_input_buffer()
         # The output of the serial.write() method is an integer representing the number of bytes written to the serial port
-        alt = int(alt)
         azi = int(azi)
+        alt = int(alt)
         command = f'W{azi:03d} {alt:03d}\r\n'
         print(command)
         
@@ -23,15 +24,14 @@ class RotorI(RotorModule.Rotor):
         #Reading response from serial port
         #response = ser.readline().decode().strip()
         #print(f"Response: {response}")
-        
-# TODO:
-# [] Func to check if antenna is on target
-#       - Idea: 
-#           * define a "close-enough-to-observe" parameter for our telescope (probably related to the observation beam)
-#           * use the C2 command to ask the controller for the rotors position and compare distance to target}}
-#
-# [] Add a "recording" module. This would probably make use of the previuosly defined "is-on-target" function.
-#
+
+    def getCurrentPos(self, current=None):
+        command = f'C2\r\n'
+        #ser.reset_input_buffer()
+        #ser.write(command.encode('UTF-8'))
+
+        #pos = ser.readline().decode().strip()
+        return pos
 
 
 status = 0

@@ -3,6 +3,12 @@ import traceback
 import Ice
 import TrackingModule, RotorModule
 import time, re
+from env.py import *
+
+class Telescope:
+    def __init__(self, ce):
+        self.close_enough = ce
+        self.current_target = (0, 0)
 
 
 def main():
@@ -16,13 +22,13 @@ def main():
         try:
             while True:
                 try:
-                    res = tracker.getAltAzi(source)
+                    res = tracker.getAziAlt(source)
                     sys.stdout.write('\r' + res + (' ' * max(0, (len(prev_s) - len(res)))))
                     altAzi = re.findall("\d+\.\d+", res)
 
                     alt = float(altAzi[0])
                     azi = float(altAzi[1])
-                    rotor.gotoAltAzi(alt, azi)
+                    rotor.gotoAziAlt(alt, azi)
                     time.sleep(3)
                 except Ice.UnknownException:
                     print(f"[{source}] doesn't exist")
@@ -45,7 +51,8 @@ if __name__ == '__main__':
         if not tracker:
             raise RuntimeError("Invalid tracker proxy")
         
-        ip_rotors = "152.74.113.115"
+        # 
+        ip_rotors = ROTOR_IP
         port_rotors = 10001
         rotor_base_prx = ic.stringToProxy(f"SimpleRotor:default -h {ip_rotors} -p {port_rotors}")
         rotor = RotorModule.RotorPrx.checkedCast(rotor_base_prx)
