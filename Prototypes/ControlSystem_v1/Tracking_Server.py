@@ -12,9 +12,13 @@ class TrackerI(TrackingModule.Tracker):
         if source != '':
             source = f'name={source}&'
         req = requests.get(f'http://localhost:8090/api/objects/info?{source}format=json')
-        data = req.json()
-        #return f'Azi: {data["azimuth"]:.10f} Alt: {data["altitude"]:.10f}'
-        return f'{data["azimuth"]:.10f} {data["altitude"]:.10f}'
+        if req.ok:
+            data = req.json()
+            return f'{data["azimuth"]:.10f} {data["altitude"]:.10f}'
+        else:
+            #I will assume that the error code is 404 and no source was selected
+            print("No Source Selected")
+            return 'NoSourceSelected'
 
 
 status = 0
