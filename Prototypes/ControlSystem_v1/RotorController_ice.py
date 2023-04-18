@@ -43,7 +43,23 @@ if 'Rotor' not in _M_RotorModule.__dict__:
             return '::RotorModule::Rotor'
         ice_staticId = staticmethod(ice_staticId)
 
-        def gotoAltAzi(self, alt, azi, current=None):
+        def gotoAziAlt(self, azi, alt, current=None):
+            """
+            Commands the rotor to go to a given Azimuth/Altitude
+            Arguments:
+            azi -- 
+            alt -- 
+            current -- The Current object for the invocation.
+            """
+            pass
+
+        def getCurrentPos(self, current=None):
+            """
+            Retrieves the current position of the rotors as a pair of coordinates.
+            Returned as a string of the following form: "AZ=aaa EL=eee"
+            Arguments:
+            current -- The Current object for the invocation.
+            """
             pass
 
         def __str__(self):
@@ -54,14 +70,68 @@ if 'Rotor' not in _M_RotorModule.__dict__:
     _M_RotorModule.RotorPrx = Ice.createTempClass()
     class RotorPrx(Ice.ObjectPrx):
 
-        def gotoAltAzi(self, alt, azi, _ctx=None):
-            return _M_RotorModule.Rotor._op_gotoAltAzi.invoke(self, ((alt, azi), _ctx))
+        """
+        Commands the rotor to go to a given Azimuth/Altitude
+        Arguments:
+        azi -- 
+        alt -- 
+        _ctx -- The request context for the invocation.
+        """
+        def gotoAziAlt(self, azi, alt, _ctx=None):
+            return _M_RotorModule.Rotor._op_gotoAziAlt.invoke(self, ((azi, alt), _ctx))
 
-        def begin_gotoAltAzi(self, alt, azi, _response=None, _ex=None, _sent=None, _ctx=None):
-            return _M_RotorModule.Rotor._op_gotoAltAzi.begin(self, ((alt, azi), _response, _ex, _sent, _ctx))
+        """
+        Commands the rotor to go to a given Azimuth/Altitude
+        Arguments:
+        azi -- 
+        alt -- 
+        _response -- The asynchronous response callback.
+        _ex -- The asynchronous exception callback.
+        _sent -- The asynchronous sent callback.
+        _ctx -- The request context for the invocation.
+        Returns: An asynchronous result object for the invocation.
+        """
+        def begin_gotoAziAlt(self, azi, alt, _response=None, _ex=None, _sent=None, _ctx=None):
+            return _M_RotorModule.Rotor._op_gotoAziAlt.begin(self, ((azi, alt), _response, _ex, _sent, _ctx))
 
-        def end_gotoAltAzi(self, _r):
-            return _M_RotorModule.Rotor._op_gotoAltAzi.end(self, _r)
+        """
+        Commands the rotor to go to a given Azimuth/Altitude
+        Arguments:
+        azi -- 
+        alt -- 
+        """
+        def end_gotoAziAlt(self, _r):
+            return _M_RotorModule.Rotor._op_gotoAziAlt.end(self, _r)
+
+        """
+        Retrieves the current position of the rotors as a pair of coordinates.
+        Returned as a string of the following form: "AZ=aaa EL=eee"
+        Arguments:
+        _ctx -- The request context for the invocation.
+        """
+        def getCurrentPos(self, _ctx=None):
+            return _M_RotorModule.Rotor._op_getCurrentPos.invoke(self, ((), _ctx))
+
+        """
+        Retrieves the current position of the rotors as a pair of coordinates.
+        Returned as a string of the following form: "AZ=aaa EL=eee"
+        Arguments:
+        _response -- The asynchronous response callback.
+        _ex -- The asynchronous exception callback.
+        _sent -- The asynchronous sent callback.
+        _ctx -- The request context for the invocation.
+        Returns: An asynchronous result object for the invocation.
+        """
+        def begin_getCurrentPos(self, _response=None, _ex=None, _sent=None, _ctx=None):
+            return _M_RotorModule.Rotor._op_getCurrentPos.begin(self, ((), _response, _ex, _sent, _ctx))
+
+        """
+        Retrieves the current position of the rotors as a pair of coordinates.
+        Returned as a string of the following form: "AZ=aaa EL=eee"
+        Arguments:
+        """
+        def end_getCurrentPos(self, _r):
+            return _M_RotorModule.Rotor._op_getCurrentPos.end(self, _r)
 
         def checkedCast(proxy, facetOrCtx=None, _ctx=None):
             return _M_RotorModule.RotorPrx.ice_checkedCast(proxy, '::RotorModule::Rotor', facetOrCtx, _ctx)
@@ -80,7 +150,8 @@ if 'Rotor' not in _M_RotorModule.__dict__:
     _M_RotorModule._t_Rotor = IcePy.defineClass('::RotorModule::Rotor', Rotor, -1, (), True, False, None, (), ())
     Rotor._ice_type = _M_RotorModule._t_Rotor
 
-    Rotor._op_gotoAltAzi = IcePy.Operation('gotoAltAzi', Ice.OperationMode.Normal, Ice.OperationMode.Normal, False, None, (), (((), IcePy._t_float, False, 0), ((), IcePy._t_float, False, 0)), (), None, ())
+    Rotor._op_gotoAziAlt = IcePy.Operation('gotoAziAlt', Ice.OperationMode.Normal, Ice.OperationMode.Normal, False, None, (), (((), IcePy._t_float, False, 0), ((), IcePy._t_float, False, 0)), (), None, ())
+    Rotor._op_getCurrentPos = IcePy.Operation('getCurrentPos', Ice.OperationMode.Normal, Ice.OperationMode.Normal, False, None, (), (), (), ((), IcePy._t_string, False, 0), ())
 
     _M_RotorModule.Rotor = Rotor
     del Rotor

@@ -1,5 +1,5 @@
 module TrackingModule {
     interface Tracker {
-        string getAltAzi(string source);
+        string getAziAlt(string source);
     };
 };

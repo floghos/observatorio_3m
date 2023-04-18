@@ -43,7 +43,7 @@ if 'Tracker' not in _M_TrackingModule.__dict__:
             return '::TrackingModule::Tracker'
         ice_staticId = staticmethod(ice_staticId)
 
-        def getAltAzi(self, source, current=None):
+        def getAziAlt(self, source, current=None):
             pass
 
         def __str__(self):
@@ -54,14 +54,14 @@ if 'Tracker' not in _M_TrackingModule.__dict__:
     _M_TrackingModule.TrackerPrx = Ice.createTempClass()
     class TrackerPrx(Ice.ObjectPrx):
 
-        def getAltAzi(self, source, _ctx=None):
-            return _M_TrackingModule.Tracker._op_getAltAzi.invoke(self, ((source, ), _ctx))
+        def getAziAlt(self, source, _ctx=None):
+            return _M_TrackingModule.Tracker._op_getAziAlt.invoke(self, ((source, ), _ctx))
 
-        def begin_getAltAzi(self, source, _response=None, _ex=None, _sent=None, _ctx=None):
-            return _M_TrackingModule.Tracker._op_getAltAzi.begin(self, ((source, ), _response, _ex, _sent, _ctx))
+        def begin_getAziAlt(self, source, _response=None, _ex=None, _sent=None, _ctx=None):
+            return _M_TrackingModule.Tracker._op_getAziAlt.begin(self, ((source, ), _response, _ex, _sent, _ctx))
 
-        def end_getAltAzi(self, _r):
-            return _M_TrackingModule.Tracker._op_getAltAzi.end(self, _r)
+        def end_getAziAlt(self, _r):
+            return _M_TrackingModule.Tracker._op_getAziAlt.end(self, _r)
 
         def checkedCast(proxy, facetOrCtx=None, _ctx=None):
             return _M_TrackingModule.TrackerPrx.ice_checkedCast(proxy, '::TrackingModule::Tracker', facetOrCtx, _ctx)
@@ -80,7 +80,7 @@ if 'Tracker' not in _M_TrackingModule.__dict__:
     _M_TrackingModule._t_Tracker = IcePy.defineClass('::TrackingModule::Tracker', Tracker, -1, (), True, False, None, (), ())
     Tracker._ice_type = _M_TrackingModule._t_Tracker
 
-    Tracker._op_getAltAzi = IcePy.Operation('getAltAzi', Ice.OperationMode.Normal, Ice.OperationMode.Normal, False, None, (), (((), IcePy._t_string, False, 0),), (), ((), IcePy._t_string, False, 0), ())
+    Tracker._op_getAziAlt = IcePy.Operation('getAziAlt', Ice.OperationMode.Normal, Ice.OperationMode.Normal, False, None, (), (((), IcePy._t_string, False, 0),), (), ((), IcePy._t_string, False, 0), ())
 
     _M_TrackingModule.Tracker = Tracker
     del Tracker
