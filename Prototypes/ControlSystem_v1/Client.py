@@ -3,17 +3,19 @@ import traceback
 import Ice
 import TrackingModule, RotorModule
 import time, re
-from env.py import *
+from env import *
 
 class Telescope:
-    def __init__(self, ce):
+    def __init__(self, ce, cp):
         self.close_enough = ce
-        self.current_target = (0, 0)
+        self.current_pos = cp
+        self.current_target = None
 
 
 def main():
+    #print("testing env vars ", ROTOR_IP)
     while True:
-        print("Type the name of an object to track:")
+        print("Hit Enter to start tracking, type 'exit' to quit.")
         source = input()
         if source == 'exit': 
             break
@@ -23,13 +25,17 @@ def main():
             while True:
                 try:
                     res = tracker.getAziAlt(source)
-                    sys.stdout.write('\r' + res + (' ' * max(0, (len(prev_s) - len(res)))))
-                    altAzi = re.findall("\d+\.\d+", res)
-
-                    alt = float(altAzi[0])
-                    azi = float(altAzi[1])
-                    rotor.gotoAziAlt(alt, azi)
-                    time.sleep(3)
+                    #print(res)
+                    if res != "NoSourceSelected":
+                        sys.stdout.write('\r' + res + (' ' * max(0, (len(prev_s) - len(res))))) 
+                        prev_s = res
+                        aziAlt = re.findall("\d+\.\d+", res)
+                        alt = float(aziAlt[0])
+                        azi = float(aziAlt[1])
+                        #rotor.gotoAziAlt(alt, azi)
+                    else:
+                        print(res)
+                    time.sleep(1)
                 except Ice.UnknownException:
                     print(f"[{source}] doesn't exist")
                     break
@@ -45,19 +51,21 @@ if __name__ == '__main__':
 
     try:
         ic = Ice.initialize(sys.argv)
+        
+        # Creating Tracker Proxy
         port_tracker = 10000
         tracker_base_prx = ic.stringToProxy(f"SimpleTracker:default -p {port_tracker}")
         tracker = TrackingModule.TrackerPrx.checkedCast(tracker_base_prx)
         if not tracker:
             raise RuntimeError("Invalid tracker proxy")
         
-        # 
-        ip_rotors = ROTOR_IP
+        # Creating Rotor Proxy
+        """ ip_rotors = ROTOR_IP
         port_rotors = 10001
         rotor_base_prx = ic.stringToProxy(f"SimpleRotor:default -h {ip_rotors} -p {port_rotors}")
         rotor = RotorModule.RotorPrx.checkedCast(rotor_base_prx)
         if not rotor:
-            raise RuntimeError("Invalid rotor proxy")
+            raise RuntimeError("Invalid rotor proxy") """
 
         main()
         
