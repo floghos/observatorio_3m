@@ -29,6 +29,12 @@ __name__ = 'MyDemo'
 if 'Tracker' not in _M_MyDemo.__dict__:
     _M_MyDemo.Tracker = Ice.createTempClass()
     class Tracker(Ice.Object):
+        """
+        class Coords {
+        double azi;
+        double alt;
+        };
+        """
         def __init__(self):
             if Ice.getType(self) == _M_MyDemo.Tracker:
                 raise RuntimeError('MyDemo.Tracker is an abstract class')
@@ -44,6 +50,9 @@ if 'Tracker' not in _M_MyDemo.__dict__:
         ice_staticId = staticmethod(ice_staticId)
 
         def getString(self, current=None):
+            pass
+
+        def getPos(self, current=None):
             pass
 
         def __str__(self):
@@ -63,6 +72,15 @@ if 'Tracker' not in _M_MyDemo.__dict__:
         def end_getString(self, _r):
             return _M_MyDemo.Tracker._op_getString.end(self, _r)
 
+        def getPos(self, _ctx=None):
+            return _M_MyDemo.Tracker._op_getPos.invoke(self, ((), _ctx))
+
+        def begin_getPos(self, _response=None, _ex=None, _sent=None, _ctx=None):
+            return _M_MyDemo.Tracker._op_getPos.begin(self, ((), _response, _ex, _sent, _ctx))
+
+        def end_getPos(self, _r):
+            return _M_MyDemo.Tracker._op_getPos.end(self, _r)
+
         def checkedCast(proxy, facetOrCtx=None, _ctx=None):
             return _M_MyDemo.TrackerPrx.ice_checkedCast(proxy, '::MyDemo::Tracker', facetOrCtx, _ctx)
         checkedCast = staticmethod(checkedCast)
@@ -81,6 +99,7 @@ if 'Tracker' not in _M_MyDemo.__dict__:
     Tracker._ice_type = _M_MyDemo._t_Tracker
 
     Tracker._op_getString = IcePy.Operation('getString', Ice.OperationMode.Normal, Ice.OperationMode.Normal, False, None, (), (), (), ((), IcePy._t_string, False, 0), ())
+    Tracker._op_getPos = IcePy.Operation('getPos', Ice.OperationMode.Normal, Ice.OperationMode.Normal, False, None, (), (), (), ((), IcePy._t_string, False, 0), ())
 
     _M_MyDemo.Tracker = Tracker
     del Tracker

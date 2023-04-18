@@ -8,6 +8,10 @@ class TrackerI(MyDemo.Tracker):
         s = "Hello World"
         return s
 
+    def getPos(self, current=None):
+        c = "Coords(0.5, 0.99)"
+        return c
+
 status = 0
 ic = None
 try:
@@ -17,6 +21,7 @@ try:
     object = TrackerI()
     adapter.add(object, ic.stringToIdentity("SimpleTracker"))
     adapter.activate()
+    print("Server Set")
     ic.waitForShutdown()
 except:
     traceback.print_exc()

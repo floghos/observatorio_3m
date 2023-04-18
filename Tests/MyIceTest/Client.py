@@ -11,9 +11,10 @@ try:
     tracker = MyDemo.TrackerPrx.checkedCast(base)
     if not tracker:
         raise RuntimeError("Invalid proxy")
-
+    print("Client Started")
     s = tracker.getString()
-    print(s)
+    p = tracker.getPos()
+    print(s, p)
     
 except:
     traceback.print_exc()
