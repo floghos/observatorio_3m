@@ -10,5 +10,10 @@ module RotorModule {
          * Returned as a string of the following form: "AZ=aaa EL=eee"
          **/
         string getCurrentPos();
+
+        /**
+         * Stops any ongoing command. (e.g: movement)
+         **/
+        void stop();
     };
 };

@@ -62,6 +62,14 @@ if 'Rotor' not in _M_RotorModule.__dict__:
             """
             pass
 
+        def stop(self, current=None):
+            """
+            Stops any ongoing command. (e.g: movement)
+            Arguments:
+            current -- The Current object for the invocation.
+            """
+            pass
+
         def __str__(self):
             return IcePy.stringify(self, _M_RotorModule._t_Rotor)
 
@@ -133,6 +141,33 @@ if 'Rotor' not in _M_RotorModule.__dict__:
         def end_getCurrentPos(self, _r):
             return _M_RotorModule.Rotor._op_getCurrentPos.end(self, _r)
 
+        """
+        Stops any ongoing command. (e.g: movement)
+        Arguments:
+        _ctx -- The request context for the invocation.
+        """
+        def stop(self, _ctx=None):
+            return _M_RotorModule.Rotor._op_stop.invoke(self, ((), _ctx))
+
+        """
+        Stops any ongoing command. (e.g: movement)
+        Arguments:
+        _response -- The asynchronous response callback.
+        _ex -- The asynchronous exception callback.
+        _sent -- The asynchronous sent callback.
+        _ctx -- The request context for the invocation.
+        Returns: An asynchronous result object for the invocation.
+        """
+        def begin_stop(self, _response=None, _ex=None, _sent=None, _ctx=None):
+            return _M_RotorModule.Rotor._op_stop.begin(self, ((), _response, _ex, _sent, _ctx))
+
+        """
+        Stops any ongoing command. (e.g: movement)
+        Arguments:
+        """
+        def end_stop(self, _r):
+            return _M_RotorModule.Rotor._op_stop.end(self, _r)
+
         def checkedCast(proxy, facetOrCtx=None, _ctx=None):
             return _M_RotorModule.RotorPrx.ice_checkedCast(proxy, '::RotorModule::Rotor', facetOrCtx, _ctx)
         checkedCast = staticmethod(checkedCast)
@@ -152,6 +187,7 @@ if 'Rotor' not in _M_RotorModule.__dict__:
 
     Rotor._op_gotoAziAlt = IcePy.Operation('gotoAziAlt', Ice.OperationMode.Normal, Ice.OperationMode.Normal, False, None, (), (((), IcePy._t_float, False, 0), ((), IcePy._t_float, False, 0)), (), None, ())
     Rotor._op_getCurrentPos = IcePy.Operation('getCurrentPos', Ice.OperationMode.Normal, Ice.OperationMode.Normal, False, None, (), (), (), ((), IcePy._t_string, False, 0), ())
+    Rotor._op_stop = IcePy.Operation('stop', Ice.OperationMode.Normal, Ice.OperationMode.Normal, False, None, (), (), (), None, ())
 
     _M_RotorModule.Rotor = Rotor
     del Rotor
