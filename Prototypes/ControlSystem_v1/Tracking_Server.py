@@ -10,12 +10,17 @@ import MyEnv
 
 class TrackerI(TrackingModule.Tracker):
     def getAziAlt(self, source, current=None):
+        '''
+        Tracking software is Stellarium.
+        When a request for an object's info is made without giving a name, 
+        it returns info about the currently selected objecet in Stellarium
+        '''
         if source != '':
             source = f'name={source}&'
         req = requests.get(f'http://localhost:{MyEnv.STEL_RC_PORT}/api/objects/info?{source}format=json')
         if req.ok:
             data = req.json()
-            print(f'{data["name"]}')
+            print(f'{data["name"]} {data["azimuth"]:.10f} {data["altitude"]:.10f}')
             return f'{data["azimuth"]:.10f} {data["altitude"]:.10f} {data["name"]}'
         else:
             #I will assume that the error code is 404 and no source was selected
