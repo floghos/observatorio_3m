@@ -9,8 +9,8 @@ import MyEnv
 def parseAziAlt(res):
     #aziAlt = re.findall("\d+\.\d+", res)
     aan = res.split()
-    alt = float(aan[0])
-    azi = float(aan[1])
+    azi = float(aan[0])
+    alt = float(aan[1])
     target_name = ""
     for i in range(2, len(aan)):
         target_name += " " + aan[i]
@@ -65,11 +65,11 @@ def main():
                     res = TRACKER_PRX.getAziAlt(source)
                     sys.stdout.write('\r' + res + (' ' * max(0, (len(prev_s) - len(res))))) 
                     prev_s = res
-                    #(azi, alt) , target_name = parseAziAlt(res)
-                    #print(azi, alt, target_name)
-                    #ROTOR_PRX.gotoAziAlt(azi, alt)
                     
-                    #if res != "NoSourceSelected":
+                    if res != "NoSourceSelected":
+                        (azi, alt) , target_name = parseAziAlt(res)
+                        #print(azi, alt, target_name)
+                        ROTOR_PRX.gotoAziAlt(azi, alt)
                     #else:
                     #    print(res)
                     
@@ -98,14 +98,14 @@ if __name__ == '__main__':
         
         # Creating Rotor Proxy
         
-        #rotor_base_prx = IC.stringToProxy(f"SimpleRotor:default -h {MyEnv.ROTOR_IP} -p {MyEnv.ROTOR_PORT}")
+        rotor_base_prx = IC.stringToProxy(f"SimpleRotor:default -h {MyEnv.ROTOR_IP} -p {MyEnv.ROTOR_PORT}")
         #For a locally running rotor server there's no need to add a host ip (-h).
         #Example: 
         #    rotor_base_prx = IC.stringToProxy(f"SimpleRotor:default -p {MyEnv.ROTOR_PORT}") 
         
-        #ROTOR_PRX = RotorModule.RotorPrx.checkedCast(rotor_base_prx)
-        #if not ROTOR_PRX:
-        #    raise RuntimeError("Invalid rotor proxy")
+        ROTOR_PRX = RotorModule.RotorPrx.checkedCast(rotor_base_prx)
+        if not ROTOR_PRX:
+            raise RuntimeError("Invalid rotor proxy")
 
         main()
         
