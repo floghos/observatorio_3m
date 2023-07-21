@@ -54,7 +54,7 @@ class RotorI(RotorModule.Rotor):
 status = 0
 ic = None
 try:
-    ser = serial.Serial('COM6', 9600, timeout=5) # uncomment to run
+    ser = serial.Serial('COM6', 9600, timeout=0) # uncomment to run
 
     ic = Ice.initialize(sys.argv)
     adapter = ic.createObjectAdapterWithEndpoints("SimpleRotorAdapter", f"default -p {MyEnv.ROTOR_PORT}")
