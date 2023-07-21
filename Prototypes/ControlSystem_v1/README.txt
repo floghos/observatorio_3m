@@ -1,9 +1,6 @@
 Instructions for running the control system.
 
-1) Run Tracking_server.py on the machine that hosts the tracking software (for our case, Stellarium).
-
-2) Run Rotor_server.py on the machine that connects to the Rotor Controller.
-
-3) Verify that MyEnv.py has the apropiate Tracking and Rotor IPs & ports
-
-4) Run Client.py
+1) Run Stellarium, making sure the Remote Control plugin's server is up and running, using a matching port as the one specified in the file MyEnv.py as the STEL_RC_PORT variable (I set it to be 8090)
+2) Run Client.py (assuming your Anaconda terminal is working on this directory, the command is 'python ./Client.py')
+3) On the Anaconda terminal, press ENTER to start tracking. The telescope should track whatever you have selected on Stellarium. Hit ENTER again to stop tracking. 
+    - Alternatively, you can deselect an object on Stellarium by RIGHT CLICKING, which will automatically STOP the antenna's movement.
