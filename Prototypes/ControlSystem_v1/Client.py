@@ -85,10 +85,9 @@ def main():
     #print("testing env vars ", ROTOR_IP)
     tloop = threading.Thread(target=trackingLoop)
     
-    input("Press enter to start tracking")
-    print("Press Enter to stop tracking")
+    input("Press ENTER to start tracking with Stellarium")
+    print("Press ENTER to stop tracking")
     tloop.start()
-    
     input()
     exit_tracking_loop.set()
     tloop.join()
@@ -123,6 +122,13 @@ def bootOptions() -> int:
             print("Please enter a valid number")
             continue
     return option
+
+    ####
+    optionsList = {
+        1: "Start required services automatically",
+        2: "",
+        3: ""
+    }
 
 
 if __name__ == '__main__':
