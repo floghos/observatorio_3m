@@ -13,20 +13,23 @@ class RotorI(RotorModule.Rotor):
         azi = int(azi)
         alt = int(alt)
         command = f'W{azi:03d} {alt:03d}\r\n'
-        print(command)
+        print(command)  # for testing
         
+        '''
         ser.reset_input_buffer()
         ser.write(command.encode('UTF-8'))
         # The output of the serial.write() method is an integer representing the number of bytes written to the serial port
-        
-        #Reading response from serial port
+        # Reading response from serial port
         response = ser.readline().decode().strip()
-        #print(f"Response: {response}")
+        '''
+        
+        #print(f"Response: {response}") # for debug
 
     def getCurrentPos(self, current=None) -> str:
         command = f'C2\r\n'
         # The C2 command returns current rotor position in as: "AZ=aaa EL=eee"
-
+        print(command) # for testing
+        '''
         ser.reset_input_buffer()
         ser.write(command.encode('UTF-8'))
         res = ser.readline().decode().strip()
@@ -37,18 +40,22 @@ class RotorI(RotorModule.Rotor):
         pos = s[0] + " " + s[1]
 
         return pos
+        '''
+        return"000 000"
     
     def stop(self, current=None) -> None:
         command = f'S\r\n'
+        '''
         ser.reset_input_buffer()
         ser.write(command.encode('UTF-8'))
+        '''
         pass
 
 
 status = 0
 ic = None
 try:
-    ser = serial.Serial('COM6', 9600, timeout=5)
+    #ser = serial.Serial('COM6', 9600, timeout=5) # uncomment to run
 
     ic = Ice.initialize(sys.argv)
     adapter = ic.createObjectAdapterWithEndpoints("SimpleRotorAdapter", f"default -p {MyEnv.ROTOR_PORT}")
@@ -66,7 +73,7 @@ if ic:
     try:
         ic.destroy()
         # Closing the serial connection
-        ser.close()
+        #ser.close() # uncomment to run
     except:
         traceback.print_exc()
         status = 1
