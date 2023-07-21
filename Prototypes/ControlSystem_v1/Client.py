@@ -94,6 +94,10 @@ def main():
         
 
 
+def start_all_services():
+    for service in list_of_services:
+        p = run_service(service)
+        subprocesses.append(p)
 
 def run_service(script_path):
     return subprocess.Popen(["python", script_path])
@@ -106,48 +110,55 @@ def terminate_service(process):
         process.kill() 
         # I read somewhere that .kill() is the same as .terminate() in windows, unlike in Linux. 
         # If this is the case then this is try/except block should be redundant but for now I'll keep this in here to be safe
-    
-def bootOptions() -> int:
+
+
+
+def bootOptions():
     # The purpose of this is to ask the user if they want to start required services automatically or do so themselves
     # Useful when running separate services on separate machines
-    optionsList = ["Start required services automatically", "I have manually started the required services", "Exit"]
-    option = 0
-    while not ((len(optionsList) - option >= 0) and (option != 0)):
+    
+    optionsList = {
+        1: "Start required services automatically",
+        2: "I have manually started the required services",
+        3: "Exit",
+    }
+
+    while True:
+        option = 0
         print("Select the corresponding option:")
-        for idx, op in enumerate(optionsList):
-            print(f"{idx+1}) {op}")
+        for key in optionsList.keys():
+            print(f"{key} {optionsList[key]}")
         try:
-            option = abs(int(input()))
+            option = int(input())
         except ValueError:
             print("Please enter a valid number")
             continue
-    return option
-
-    ####
-    optionsList = {
-        1: "Start required services automatically",
-        2: "",
-        3: ""
-    }
 
 
+        if option == 1:
+            start_all_services()
+            break
+        elif option == 2:
+            # Continues normally
+            break
+        elif option == 3:
+            sys.exit(status)
+            break
+        else:
+            print(f"Invalid option. Please enter a number between 1 and {len(optionsList)}")
+
+
+
+list_of_services = ["Rotor_Server.py", "Tracking_Server.py"]
+subprocesses = []
 if __name__ == '__main__':
     status = 0
 
     # Starting Tracking and Rotor services
-    list_of_services = ["Rotor_Server.py", "Tracking_Server.py"]
-    subprocesses = []
     
-    option = bootOptions()
+    bootOptions()
     
-    if option == 1:
-        for service in list_of_services:
-            p = run_service(service)
-            subprocesses.append(p)
-    elif option == 2:
-        pass
-    elif option == 3:
-        sys.exit(status)
+   
 
     
     IC = None
