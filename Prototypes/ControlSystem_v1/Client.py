@@ -108,18 +108,42 @@ def terminate_service(process):
         # I read somewhere that .kill() is the same as .terminate() in windows, unlike in Linux. 
         # If this is the case then this is try/except block should be redundant but for now I'll keep this in here to be safe
     
+def bootOptions() -> int:
+    # The purpose of this is to ask the user if they want to start required services automatically or do so themselves
+    # Useful when running separate services on separate machines
+    optionsList = ["Start required services automatically", "I have manually started the required services", "Exit"]
+    option = 0
+    while not ((len(optionsList) - option >= 0) and (option != 0)):
+        print("Select the corresponding option:")
+        for idx, op in enumerate(optionsList):
+            print(f"{idx+1}) {op}")
+        try:
+            option = abs(int(input()))
+        except ValueError:
+            print("Please enter a valid number")
+            continue
+    return option
+
+
 if __name__ == '__main__':
+    status = 0
 
     # Starting Tracking and Rotor services
     list_of_services = ["Rotor_Server.py", "Tracking_Server.py"]
     subprocesses = []
-    for service in list_of_services:
-        p = run_service(service)
-        subprocesses.append(p)
-    '''
-    '''
+    
+    option = bootOptions()
+    
+    if option == 1:
+        for service in list_of_services:
+            p = run_service(service)
+            subprocesses.append(p)
+    elif option == 2:
+        pass
+    elif option == 3:
+        sys.exit(status)
 
-    status = 0
+    
     IC = None
 
     try:
@@ -153,7 +177,6 @@ if __name__ == '__main__':
         # Clean up
         try:
             IC.destroy()
-
             # terminate child subprocesses
             for p in subprocesses:
                 terminate_service(p)
