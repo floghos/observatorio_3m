@@ -5,6 +5,8 @@ import TrackingModule, RotorModule
 import time, re
 #from MyEnv import *
 import MyEnv
+import subprocess
+import threading
 
 def parseAziAlt(res):
     #aziAlt = re.findall("\d+\.\d+", res)
@@ -17,12 +19,13 @@ def parseAziAlt(res):
 
     return (azi, alt), target_name.strip()
 
+
 class Telescope:
     def __init__(self, ce, r_prx):
         # Distance to be considered close enough to "be on target", expressed in degrees. (INT)
-        self.close_enough = ce
+        self.close_enough = ce # consider changing to "resolution" or something like that
         
-        # Reference to rotor proxy
+        # Reference to rotor server proxy
         self.rotor_prx = r_prx
         
         # Coords of the current target being tracked. Stored as a tuple of the form (azimuth, altitude)
@@ -45,45 +48,77 @@ class Telescope:
         return not (self.current_pos[0] - self.close_enough < target_azi < self.current_pos[0] + self.close_enough) or \
             not (self.current_pos[1] - self.close_enough < target_alt < self.current_pos[1] + self.close_enough)
 
+exit_tracking_loop = threading.Event()
          
+def trackingLoop():
+    #source = input()
+    source = ""
+    prev_s = ""
+    print("Tracking...")
+    while not exit_tracking_loop.is_set():
+        try:
+            res = TRACKER_PRX.getAziAlt(source)
+            sys.stdout.write('\r' + res + (' ' * max(0, (len(prev_s) - len(res))))) 
+            prev_s = res
+            
+            if res != "NoSourceSelected":
+                (azi, alt) , target_name = parseAziAlt(res)
+                #print(azi, alt, target_name)
+                ROTOR_PRX.gotoAziAlt(azi, alt)
+            else:
+                ROTOR_PRX.stop()
+            #    print(res)
+            
+            time.sleep(1) # arbitrary timer
+        except Ice.UnknownException:
+            print(f"[{source}] doesn't exist")
+            break
+    ROTOR_PRX.stop()
+    print("\nTracking stopped\n")
+        
+
 
 def main():
     #_alt, _azi = parseAziAlt(ROTOR_PX.getCurrentPos())
-    close_enough_angle = 2
+    close_enough_angle = 1
     #tel = Telescope(close_enough_angle, ROTOR_PRX)
     #print("testing env vars ", ROTOR_IP)
-    while True:
-        print("Hit Enter to start tracking. Type 'exit' to quit.")
-        source = input()
-        if source == 'exit': 
-            break
-        prev_s = ""
-        print(f'Tracking {source}')
-        try:
-            while True:
-                try:
-                    res = TRACKER_PRX.getAziAlt(source)
-                    sys.stdout.write('\r' + res + (' ' * max(0, (len(prev_s) - len(res))))) 
-                    prev_s = res
-                    
-                    if res != "NoSourceSelected":
-                        (azi, alt) , target_name = parseAziAlt(res)
-                        #print(azi, alt, target_name)
-                        ROTOR_PRX.gotoAziAlt(azi, alt)
-                    #else:
-                    #    print(res)
-                    
-                    time.sleep(1) # arbitrary timer
-                except Ice.UnknownException:
-                    print(f"[{source}] doesn't exist")
-                    break
-
-        except KeyboardInterrupt:
-            print("\nTracking stopped\n")
-            pass
+    tloop = threading.Thread(target=trackingLoop)
+    
+    input("Press enter to start tracking")
+    print("Press Enter to stop tracking")
+    tloop.start()
+    
+    input()
+    exit_tracking_loop.set()
+    tloop.join()
+        
 
 
+
+def run_service(script_path):
+    return subprocess.Popen(["python", script_path])
+
+def terminate_service(process):
+    process.terminate()
+    try:
+        process.wait(timeout=5)
+    except subprocess.TimeoutExpired:
+        process.kill() 
+        # I read somewhere that .kill() is the same as .terminate() in windows, unlike in Linux. 
+        # If this is the case then this is try/except block should be redundant but for now I'll keep this in here to be safe
+    
 if __name__ == '__main__':
+
+    # Starting Tracking and Rotor services
+    list_of_services = ["Rotor_Server.py", "Tracking_Server.py"]
+    subprocesses = []
+    for service in list_of_services:
+        p = run_service(service)
+        subprocesses.append(p)
+    '''
+    '''
+
     status = 0
     IC = None
 
@@ -98,10 +133,11 @@ if __name__ == '__main__':
         
         # Creating Rotor Proxy
         
-        rotor_base_prx = IC.stringToProxy(f"SimpleRotor:default -h {MyEnv.ROTOR_IP} -p {MyEnv.ROTOR_PORT}")
-        #For a locally running rotor server there's no need to add a host ip (-h).
-        #Example: 
-        #    rotor_base_prx = IC.stringToProxy(f"SimpleRotor:default -p {MyEnv.ROTOR_PORT}") 
+        #For a remote rotor server use the following proxy
+        #rotor_base_prx = IC.stringToProxy(f"SimpleRotor:default -h {MyEnv.ROTOR_IP} -p {MyEnv.ROTOR_PORT}")
+        
+        #For a local rotor server use the following proxy (no IP is needed, so we remove the -h option)
+        rotor_base_prx = IC.stringToProxy(f"SimpleRotor:default -p {MyEnv.ROTOR_PORT}") 
         
         ROTOR_PRX = RotorModule.RotorPrx.checkedCast(rotor_base_prx)
         if not ROTOR_PRX:
@@ -117,6 +153,11 @@ if __name__ == '__main__':
         # Clean up
         try:
             IC.destroy()
+
+            # terminate child subprocesses
+            for p in subprocesses:
+                terminate_service(p)
+
         except:
             traceback.print_exc()
             status = 1
