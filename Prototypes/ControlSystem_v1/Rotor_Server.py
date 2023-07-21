@@ -10,6 +10,7 @@ class RotorI(RotorModule.Rotor):
     # Currently using YAESU protocol. Planning to change to Rot2Prog eventually.
 
     def gotoAziAlt(self, azi, alt, current=None) -> None:
+        # The following is using the YAESU protocol
         azi = int(azi)
         alt = int(alt)
         command = f'W{azi:03d} {alt:03d}\r\n'
@@ -24,6 +25,7 @@ class RotorI(RotorModule.Rotor):
         #print(f"Response: {response}")
 
     def getCurrentPos(self, current=None) -> str:
+        # The following is using the YAESU protocol
         command = f'C2\r\n'
         # The C2 command returns current rotor position in as: "AZ=aaa EL=eee"
 
@@ -39,6 +41,7 @@ class RotorI(RotorModule.Rotor):
         return pos
     
     def stop(self, current=None) -> None:
+        # The following is using the YAESU protocol
         command = f'S\r\n'
         ser.reset_input_buffer()
         ser.write(command.encode('UTF-8'))

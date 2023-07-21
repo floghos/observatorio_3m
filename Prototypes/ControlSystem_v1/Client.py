@@ -80,6 +80,7 @@ def main():
 
         except KeyboardInterrupt:
             print("\nTracking stopped\n")
+            ROTOR_PRX.stop()
             pass
 
 
@@ -98,10 +99,13 @@ if __name__ == '__main__':
         
         # Creating Rotor Proxy
         
-        rotor_base_prx = IC.stringToProxy(f"SimpleRotor:default -h {MyEnv.ROTOR_IP} -p {MyEnv.ROTOR_PORT}")
-        #For a locally running rotor server there's no need to add a host ip (-h).
-        #Example: 
-        #    rotor_base_prx = IC.stringToProxy(f"SimpleRotor:default -p {MyEnv.ROTOR_PORT}") 
+        if MyEnv.ROTOR_IP == "":
+            # This means the Rotor server is running locally
+            # For a locally running rotor server there's no need to add a host ip (-h).
+            rotor_base_prx = IC.stringToProxy(f"SimpleRotor:default -p {MyEnv.ROTOR_PORT}")
+        else:
+            # This means the Rotor server is running remotely 
+            rotor_base_prx = IC.stringToProxy(f"SimpleRotor:default -h {MyEnv.ROTOR_IP} -p {MyEnv.ROTOR_PORT}")
         
         ROTOR_PRX = RotorModule.RotorPrx.checkedCast(rotor_base_prx)
         if not ROTOR_PRX:
