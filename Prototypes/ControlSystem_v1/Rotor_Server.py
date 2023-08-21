@@ -72,7 +72,7 @@ if ic:
     try:
         ic.destroy()
         # Closing the serial connection
-        #ser.close() # uncomment to run
+        ser.close() # uncomment to run
     except:
         traceback.print_exc()
         status = 1
