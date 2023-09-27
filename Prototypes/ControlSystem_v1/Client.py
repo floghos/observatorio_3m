@@ -130,16 +130,15 @@ def controlModes():
         #    print("Please enter a valid option")
         #    continue
         option = input().lower()
-
-        if option == 1:
+        if int(option) == 1:
             # Tracking mode
             trackingMode()
             #break
-        elif option == 2:
+        elif int(option) == 2:
             # Manual mode
             manualMode()
             #break
-        elif option == 3 or option == 'exit':
+        elif int(option) == 3 or option == 'exit':
             break
         else:
             print(f"Invalid option. Please enter an option between 1 and {len(optionsList)}")
