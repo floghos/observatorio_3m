@@ -8,7 +8,7 @@ import MyEnv
 import subprocess
 import threading
 
-def parseAziAlt(res):
+def parseAziAlt(res: str):
     #aziAlt = re.findall("\d+\.\d+", res)
     aan = res.split()
     azi = float(aan[0])
@@ -79,19 +79,71 @@ def trackingLoop():
 
 
 def main():
+    #settingsMenu()
+    controlModes()
     #_alt, _azi = parseAziAlt(ROTOR_PX.getCurrentPos())
-    close_enough_angle = 1
+    #close_enough_angle = 1
     #tel = Telescope(close_enough_angle, ROTOR_PRX)
     #print("testing env vars ", ROTOR_IP)
-    tloop = threading.Thread(target=trackingLoop)
     
-    input("Press ENTER to start tracking with Stellarium")
-    print("Press ENTER to stop tracking")
+def trackingMode():
+    tloop = threading.Thread(target=trackingLoop)
+    print("Press ENTER to exit Tracking mode")
     tloop.start()
     input()
     exit_tracking_loop.set()
     tloop.join()
+
+def manualMode():
+    print("Enter the azimuth and altitude coordinates of the target in the following format: azimuth altitude")
+    print("Enter 'stop' or 's' to stop the rotors at any time")
+    x = input().lower()
+    while x != "exit":
+        if x == "stop" or x == "s": 
+            ROTOR_PRX.stop()
+        else:    
+            try:
+                (azi, alt), _name = parseAziAlt(x)
+                ROTOR_PRX.gotoAziAlt(azi, alt)
+            except:
+                print("Invalid input")
+
+        x = input("Enter new azi alt coordinates or type 'exit' to exit\n").lower()
+
+
+def controlModes():
+    optionsList = {
+        1: "Tracking Mode: Use Stellarium to point to and track objects.",
+        2: "Manual Mode: Input azimuth and altitude coordinates to point the telescope to.",
+        3: "Exit",
+    }
+
+    while True:
+        option = 0
+        print("Select the desired Control Mode:")
+        for key in optionsList.keys():
+            print(f"{key} {optionsList[key]}")
         
+        #try:
+        #    option = int(input())
+        #except ValueError:
+        #    print("Please enter a valid option")
+        #    continue
+        option = input().lower()
+
+        if option == 1:
+            # Tracking mode
+            trackingMode()
+            #break
+        elif option == 2:
+            # Manual mode
+            manualMode()
+            #break
+        elif option == 3 or option == 'exit':
+            break
+        else:
+            print(f"Invalid option. Please enter an option between 1 and {len(optionsList)}")
+
 
 
 def start_all_services():
@@ -154,13 +206,10 @@ subprocesses = []
 if __name__ == '__main__':
     status = 0
 
-    # Starting Tracking and Rotor services
-    
+    # Starting Tracking and Rotor services 
     bootOptions()
     
-   
 
-    
     IC = None
 
     try:
@@ -193,6 +242,8 @@ if __name__ == '__main__':
     if IC:
         # Clean up
         try:
+            # stop the rotors before exiting
+            ROTOR_PRX.stop() 
             IC.destroy()
             # terminate child subprocesses
             for p in subprocesses:
